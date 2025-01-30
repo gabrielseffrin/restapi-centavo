@@ -21,7 +21,7 @@ const pool = new Pool({
 
 app.post('/api/users', async (req, res) => {
 	try {
-	  const { name, email, phone_contact = '', type = 'user', password } = req.body;
+	  const { name, email, password } = req.body;
   
 	  if (!name || !email || !password) {
 		return res.status(400).json({ error: 'Name, email, and password are required' });
@@ -29,8 +29,8 @@ app.post('/api/users', async (req, res) => {
   
 	  const hashedPassword = await bcrypt.hash(password, 10);
 	  const result = await pool.query(
-		'INSERT INTO users (name, email, phone_contact, type, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-		[name, email, phone_contact, type, hashedPassword]
+		'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
+		[name, email, hashedPassword]
 	  );
   
 	  res.status(201).json(result.rows[0]);
@@ -67,7 +67,8 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-app.get(`api/despesas/${id}`, async (req, res) => {
+app.get(`api/despesas/:id`, async (req, res) => {
+	const {id} = req.params;
 	try {
 		const result = await pool.query('SELECT NOW()')
 		;
