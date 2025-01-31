@@ -67,11 +67,30 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-app.get(`api/despesas/:id`, async (req, res) => {
-	const {id} = req.params;
+app.get('/api/despesas/:idUser', async (req, res) => {
 	try {
-		const result = await pool.query('SELECT NOW()')
-		;
+		const { idUser } = req.params;
+		console.log(`Buscando despesas para o usuário ID: ${idUser}`);
+
+		const result = await pool.query(
+			'SELECT * FROM transactions WHERE user_id = $1 AND EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)',
+			[idUser]
+		);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({ error: 'Nenhuma despesa encontrada para este usuário.' });
+		}
+
+		res.json(result.rows);
+	} catch (err) {
+		console.error('Erro ao buscar despesas:', err.message);
+		res.status(500).json({ error: 'Erro no servidor', details: err.message });
+	}
+});
+
+app.get('/api/categorias', async (req, res) => {
+	try {
+		const result = await pool.query('SELECT * FROM categories');
 		res.json(result.rows[0]);
 	} catch (err) {
 		console.error(err.message);
