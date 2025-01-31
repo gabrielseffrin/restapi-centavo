@@ -40,6 +40,26 @@ app.post('/api/users', async (req, res) => {
 	}
   });
 
+  app.post('/api/registra-categoria', async (req, res) => {
+	try {
+	  const { name, category_type } = req.body;
+  
+	  if (!name || !category_type) {
+		return res.status(400).json({ error: 'Name, category_type are required' });
+	  }
+
+	  const result = await pool.query(
+		'INSERT INTO categories (name, category_type_id) VALUES ($1, $2)',
+		[name, category_type]
+	  );
+  
+	  res.status(201).json(result.rows[0]);
+	} catch (err) {
+	  console.error(err.message);
+	  res.status(500).json({ error: 'Database error', details: err.message });
+	}
+  });
+
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
