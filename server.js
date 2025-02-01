@@ -43,6 +43,9 @@ app.post('/api/users', async (req, res) => {
   app.post('/api/registra-categoria', async (req, res) => {
 	try {
 	  const { name, category_type } = req.body;
+
+	  console.log(name);
+	  console.log(category_type);
   
 	  if (!name || !category_type) {
 		return res.status(400).json({ error: 'Name, category_type are required' });
@@ -111,7 +114,7 @@ app.get('/api/despesas/:idUser', async (req, res) => {
 app.get('/api/categorias', async (req, res) => {
 	try {
 		const result = await pool.query('SELECT * FROM categories');
-		res.json(result.rows[0]);
+		res.json(result.rows);
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).json({ error: 'Connection error', details: err.message });
