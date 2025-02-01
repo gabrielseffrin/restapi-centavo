@@ -43,16 +43,13 @@ app.post('/api/users', async (req, res) => {
   app.post('/api/registra-categoria', async (req, res) => {
 	try {
 	  const { name, category_type } = req.body;
-
-	  console.log(name);
-	  console.log(category_type);
   
 	  if (!name || !category_type) {
 		return res.status(400).json({ error: 'Name, category_type are required' });
 	  }
 
 	  const result = await pool.query(
-		'INSERT INTO categories (name, category_type_id) VALUES ($1, $2)',
+		'INSERT INTO categories (name, category_type_id) VALUES ($1, $2) RETURNING',
 		[name, category_type]
 	  );
   
