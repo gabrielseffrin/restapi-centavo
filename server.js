@@ -49,7 +49,7 @@ app.post('/api/users', async (req, res) => {
 	  }
 
 	  const result = await pool.query(
-		'INSERT INTO categories (name, category_type_id) VALUES ($1, $2) RETURNING',
+		'INSERT INTO categories (name, category_type_id) VALUES ($1, $2) RETURNING *',
 		[name, category_type]
 	  );
   
