@@ -125,7 +125,7 @@ app.get("/api/despesas/:idUser", async (req, res) => {
     console.log(`Buscando despesas para o usuário ID: ${idUser}`);
 
     const result = await pool.query(
-      "SELECT date, user_id, category_type_id, category_id, name, amount FROM transactions t join public.categories c on t.category_id = c.id WHERE user_id = $1 AND EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)",
+      "SELECT t.id, date, user_id, category_type_id, category_id, name, amount FROM transactions t join public.categories c on t.category_id = c.id WHERE user_id = $1 AND EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM CURRENT_DATE)",
       [idUser]
     );
 
