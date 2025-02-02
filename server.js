@@ -162,6 +162,48 @@ app.get("/api/test-connection", async (req, res) => {
   }
 });
 
+app.delete("/api/delete-transaction/:id", async (req, res) => {
+	const { id } = req.params;
+	console.log(id);
+  
+	try {
+	  const result = await pool.query(
+		"DELETE FROM transactions WHERE id = $1 RETURNING *",
+		[id]
+	  );
+  
+	  if (result.rows.length === 0) {
+		return res.status(404).json({ error: "Transação não encontrada." });
+	  }
+  
+	  res.status(200).json({ message: "Transação excluída com sucesso." });
+	} catch (err) {
+	  console.error(err.message);
+	  res.status(500).json({ error: "Erro no servidor", details: err.message });
+	}
+  });
+
+  app.post("/api/edit-transaction", async (req, res) => {
+	const { id, amount, category_id, date } = req.body;
+  
+	console.log(id, amount, category_id, date);
+	try {
+	  const result = await pool.query(
+		"UPDATE transactions SET amount = $1, category_id = $2, date = $3 WHERE id = $4 RETURNING *",
+		[amount, category_id, date, id]
+	  );
+  
+	  if (result.rows.length === 0) {
+		return res.status(404).json({ error: "Transação não encontrada." });
+	  }
+  
+	  res.status(200).json({ message: "Transação atualizada com sucesso.", transaction: result.rows[0] });
+	} catch (err) {
+	  console.error(err.message);
+	  res.status(500).json({ error: "Erro no servidor", details: err.message });
+	}
+  });
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
